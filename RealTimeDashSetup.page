@@ -1,0 +1,62 @@
+<apex:page standardController="Real_Time_Dash__c" extensions="RealTimeDash">
+  <apex:form >
+  <apex:actionRegion >
+    <apex:pageblock id="MainBlock"> 
+    <apex:pageBlockSection >
+        <apex:inputText value="{!RTDash.Name}"/>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection >
+        <apex:outputLabel >Select main report object</apex:outputLabel>  <br/>  
+        <apex:selectList value="{!RTDash.Report_Object__c}" multiselect="false" size="1">
+            <apex:selectOptions value="{!ObjectOptions}"/>
+            <apex:actionSupport event="onchange" action="{!populateColSelect}" rerender="MainBlock"/>
+        </apex:selectList>   
+    </apex:pageBlockSection>
+    <apex:pageBlockSection id="colSelect" title="Select {!RTDash.Report_Object__c} fields" rendered="{!RTDash.Report_Object__c!=null}">
+         <apex:panelGrid columns="3" id="abcd">
+            <apex:selectList label="Select {!RTDash.Report_Object__c} fields" id="sel1" value="{!leftselected}" multiselect="true" size="5">
+                <apex:selectOptions value="{!unselectedvalues}" />
+            </apex:selectList>
+                <apex:panelGroup >
+                    <br/>
+                    <apex:commandButton action="{!selectclick}" reRender="abcd" value=">"/>
+                    <br/><br/>
+                    <apex:commandButton action="{!unselectclick}" reRender="abcd" value="<"/>
+                </apex:panelGroup>
+            <apex:selectList id="sel2" value="{!rightselected}" multiselect="true" size="5">
+                <apex:selectOptions value="{!SelectedValues}" />
+            </apex:selectList>
+        </apex:panelGrid>
+    </apex:pageBlockSection>   
+      <apex:pageBlockSection id="filter" title="Filter" rendered="{!RTDash.Report_Object__c!=null}">
+          <apex:dataTable value="{!Criteria}" var="criterion" id="theTable" rowClasses="odd,even" styleClass="tableClass">
+            <apex:column rendered="{!showcolumns}">
+                <apex:facet name="header">Field Name</apex:facet>
+                <apex:selectList id="filterfieldlist" value="{!criterion.Field__c}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!unselectedvalues}" />
+                </apex:selectList>
+            </apex:column>
+            <apex:column rendered="{!showcolumns}">
+                <apex:facet name="header">Operator</apex:facet>
+                <apex:selectList id="filteroplist" value="{!criterion.Operator__c}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!operatorslist}" />
+                </apex:selectList>
+            </apex:column>
+            <apex:column rendered="{!showcolumns}">
+                <apex:facet name="header">Value</apex:facet>
+                <apex:inputText id="filtervalue" value="{!criterion.Value__c}"/>
+            </apex:column>
+
+            </apex:dataTable>
+          <br/>
+          <apex:pageBlockSectionItem >
+          <apex:commandButton action="{!addFilter}"  value="Add New" rerender="MainBlock"/>
+          <apex:commandButton action="{!Save}"  value="Save" rerender="MainBlock"/>
+          </apex:pageBlockSectionItem>
+         
+    </apex:pageBlockSection>     
+     
+    </apex:pageBlock>
+   </apex:actionRegion>
+  </apex:form>
+</apex:page>
